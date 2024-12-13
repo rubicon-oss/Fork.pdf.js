@@ -432,6 +432,16 @@ class PDFViewer {
     }
   }
 
+  // Rubicon fork start
+  get annotationMode() {
+    return this.#annotationMode;
+  }
+
+  set annotationMode(val) {
+    this.#annotationMode = val;
+  }
+  // Rubicon fork end
+
   /**
    * @returns {boolean} Whether the pageNumber is valid (within bounds).
    * @private

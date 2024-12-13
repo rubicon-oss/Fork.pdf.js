@@ -70,6 +70,7 @@ import { getFontSubstitution } from "./font_substitutions.js";
 import { getGlyphsUnicode } from "./glyphlist.js";
 import { getMetrics } from "./metrics.js";
 import { getUnicodeForGlyph } from "./unicode.js";
+import { GlyphDimension } from "./glyphDimension.js"; // <- Rubicon fork
 import { ImageResizer } from "./image_resizer.js";
 import { JpegStream } from "./jpeg_stream.js";
 import { MurmurHash3_64 } from "../shared/murmurhash3.js";
@@ -2378,6 +2379,7 @@ class PartialEvaluator {
       transform: null,
       fontName: null,
       hasEOL: false,
+      glyphDimensions: [], // <- Rubicon fork
     };
 
     // Use a circular buffer (length === 2) to save the last chars in the
@@ -2487,6 +2489,15 @@ class PartialEvaluator {
         fontName,
         hasEOL: false,
       });
+
+      // Rubicon fork start
+      GlyphDimension.evaluatorPushWhiteSpacesHook(
+        textContent,
+        width,
+        height,
+        transform
+      );
+      // Rubicon fork end
     }
 
     function getCurrentTextTransform() {
@@ -2617,6 +2628,7 @@ class PartialEvaluator {
         transform: textChunk.transform,
         fontName: textChunk.fontName,
         hasEOL: textChunk.hasEOL,
+        glyphDimensions: textChunk.glyphDimensions, // <- Rubicon fork
       };
     }
 
@@ -2974,6 +2986,17 @@ class PartialEvaluator {
             textState.translateTextMatrix(0, -charSpacing);
           }
         }
+
+        // Rubicon fork start
+        GlyphDimension.evaluatorBuildTextContentItemHook(
+          glyphUnicode,
+          scaledDim,
+          textChunk,
+          font,
+          textState,
+          glyph
+        );
+        // Rubicon fork end
       }
     }
 
@@ -3003,6 +3026,14 @@ class PartialEvaluator {
         if (textContentItem.initialized) {
           resetLastChars();
           textContentItem.str.push(" ");
+          
+          // Rubicon fork start
+          GlyphDimension.evaluatorAddFakeSpacesHook(
+            width,
+            textContentItem,
+            textState
+          );
+          // Rubicon fork end
         }
         return false;
       }
@@ -3044,6 +3075,7 @@ class PartialEvaluator {
       textContent.items.push(runBidiTransform(textContentItem));
       textContentItem.initialized = false;
       textContentItem.str.length = 0;
+      textContentItem.glyphDimensions = []; // <- Rubicon fork
     }
 
     function enqueueChunk(batch = false) {

@@ -1,3 +1,16 @@
+# Fork info
+Wenn eine neue PDF.js Version released wird muss auch ein neuer Release vom Fork gemacht werden
+
+origin = https://github.com/rubicon-oss/Fork.pdf.js.git
+upstream = https://github.com/mozilla/pdf.js.git
+
+1. Den origin/master rebasen upstream/master mit dem aktuellen PDF.js release Tag
+2. origin/master pushen
+3. Von origin/master einen neuen release Branch erstellen -> release/[PDF.js Versionsnummer]
+4. Neuen branch pushen
+5. Auf github einen neuen Release erstellen, dadurch wird der Workflow "Publish release" gestartet und der release erhält dann automatisch die Artifacts
+
+
 # PDF.js [![Build Status](https://github.com/mozilla/pdf.js/workflows/CI/badge.svg?branch=master)](https://github.com/mozilla/pdf.js/actions?query=workflow%3ACI+branch%3Amaster)
 
 [PDF.js](https://mozilla.github.io/pdf.js/) is a Portable Document Format (PDF) viewer that is built with HTML5.

@@ -306,6 +306,16 @@ class PDFPageView {
     }
   }
 
+  // Rubicon fork start
+  get annotationMode() {
+    return this.#annotationMode;
+  }
+
+  set annotationMode(val) {
+    this.#annotationMode = val;
+  }
+  // Rubicon fork end
+
   #setDimensions() {
     const { viewport } = this;
     if (this.pdfPage) {
