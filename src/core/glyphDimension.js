@@ -37,7 +37,7 @@ class GlyphDimension {
       0,
       0,
       transform,
-      false
+      true
     );
 
     currentTextContentItem.glyphDimensions.push(glyphDimension);
@@ -45,21 +45,17 @@ class GlyphDimension {
 
   static evaluatorBuildTextContentItemHook(
     glyphUnicode,
-    scaledDim,
+    width,
     textChunk,
     font,
-    textState,
     glyph
   ) {
     const glyphDimension = new GlyphDimension(
       glyphUnicode,
-      scaledDim * textChunk.textAdvanceScale,
-      textChunk.prevTransform[0] +
-        Math.abs(font.descent * textState.fontSize) +
-        font.ascent,
-      (textChunk.width - scaledDim) * textChunk.textAdvanceScale,
-      textChunk.prevTransform[5] -
-        (Math.abs(font.descent * textState.fontSize) + font.ascent),
+      width * textChunk.textAdvanceScale,
+      textChunk.height * font.lineHeight,
+      (textChunk.width - width) * textChunk.textAdvanceScale,
+      textChunk.transform[5] + textChunk.height,
       textChunk.transform,
       false
     );
@@ -85,16 +81,19 @@ class GlyphDimension {
     const glyphDimension = new GlyphDimension(
       " ",
       width * textContentItem.textAdvanceScale,
-      textContentItem.transform[0] +
-        Math.abs(textState.font.descent * textState.fontSize) +
-        textState.font.ascent,
-      textContentItem.width * textContentItem.textAdvanceScale,
-      textContentItem.transform[5] -
-        (Math.abs(textState.font.descent * textState.fontSize) +
-          textState.font.ascent),
+      textContentItem.height * textState.font.lineHeight,
+      (textContentItem.width - width) * textContentItem.textAdvanceScale,
+      textContentItem.transform[5] + textContentItem.height,
       textContentItem.transform,
       false
     );
+
+    // In case we have an previous dimension we want the space to start at
+    // the end of the previous
+    if (textContentItem.glyphDimensions.length > 0) {
+      const previous = textContentItem.glyphDimensions.at(-1);
+      glyphDimension.X = previous.X + previous.Width;
+    }
 
     textContentItem.glyphDimensions.push(glyphDimension);
   }

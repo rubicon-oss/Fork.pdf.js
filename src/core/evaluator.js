@@ -2946,6 +2946,8 @@ class PartialEvaluator {
         // Must be called after compareWithLastPosition because
         // the textContentItem could have been flushed.
         const textChunk = ensureTextContentItem();
+        const widthBefore = textChunk.width; // <- Rubicon fork
+
         if (category.isZeroWidthDiacritic) {
           scaledDim = 0;
         }
@@ -2988,14 +2990,15 @@ class PartialEvaluator {
         }
 
         // Rubicon fork start
+
         GlyphDimension.evaluatorBuildTextContentItemHook(
           glyphUnicode,
-          scaledDim,
+          textChunk.width - widthBefore,
           textChunk,
           font,
-          textState,
           glyph
         );
+
         // Rubicon fork end
       }
     }
@@ -3026,7 +3029,7 @@ class PartialEvaluator {
         if (textContentItem.initialized) {
           resetLastChars();
           textContentItem.str.push(" ");
-          
+
           // Rubicon fork start
           GlyphDimension.evaluatorAddFakeSpacesHook(
             width,
