@@ -53,7 +53,7 @@ class GlyphDimension {
     const glyphDimension = new GlyphDimension(
       glyphUnicode,
       width * textChunk.textAdvanceScale,
-      textChunk.height * font.lineHeight,
+      (textChunk.height + Math.abs(textChunk.negativeSpaceMax)) * font.lineHeight,
       (textChunk.width - width) * textChunk.textAdvanceScale,
       textChunk.transform[5] + textChunk.height,
       textChunk.transform,
@@ -81,7 +81,7 @@ class GlyphDimension {
     const glyphDimension = new GlyphDimension(
       " ",
       width * textContentItem.textAdvanceScale,
-      textContentItem.height * textState.font.lineHeight,
+      (textContentItem.height + Math.abs(textContentItem.negativeSpaceMax)) * textState.font.lineHeight,
       (textContentItem.width - width) * textContentItem.textAdvanceScale,
       textContentItem.transform[5] + textContentItem.height,
       textContentItem.transform,
