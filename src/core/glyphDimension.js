@@ -47,13 +47,13 @@ class GlyphDimension {
     glyphUnicode,
     width,
     textChunk,
-    font,
+    textState,
     glyph
   ) {
     const glyphDimension = new GlyphDimension(
       glyphUnicode,
       width * textChunk.textAdvanceScale,
-      (textChunk.height + Math.abs(textChunk.negativeSpaceMax)) * font.lineHeight,
+      this.getHeight(textState, textChunk),
       (textChunk.width - width) * textChunk.textAdvanceScale,
       textChunk.transform[5] + textChunk.height,
       textChunk.transform,
@@ -81,7 +81,7 @@ class GlyphDimension {
     const glyphDimension = new GlyphDimension(
       " ",
       width * textContentItem.textAdvanceScale,
-      (textContentItem.height + Math.abs(textContentItem.negativeSpaceMax)) * textState.font.lineHeight,
+      this.getHeight(textState, textContentItem),
       (textContentItem.width - width) * textContentItem.textAdvanceScale,
       textContentItem.transform[5] + textContentItem.height,
       textContentItem.transform,
@@ -96,6 +96,36 @@ class GlyphDimension {
     }
 
     textContentItem.glyphDimensions.push(glyphDimension);
+  }
+
+  static getSpaceMax(textState, textContentItem) {
+    const font = textState.font;
+
+    let alternateSpaceMax = 0;
+    if (font.bbox && font.fontMatrix) {
+      alternateSpaceMax =
+        Math.abs(font.bbox[3] - font.bbox[1]) * font.fontMatrix[3];
+    }
+
+    alternateSpaceMax =
+      (alternateSpaceMax + font.ascent + Math.abs(font.descent)) * 1.2;
+
+    const spaceMax = Math.min(
+      Math.abs(textContentItem.negativeSpaceMax),
+      alternateSpaceMax
+    );
+    return spaceMax;
+  }
+
+  static getHeight(textState, textContentItem) {
+    const spaceMax = this.getSpaceMax(textState, textContentItem);
+
+    let height = textContentItem.height + spaceMax;
+    if (!isNaN(textState.font.lineHeight)) {
+      height *= textState.font.lineHeight;
+    }
+
+    return height;
   }
 }
 

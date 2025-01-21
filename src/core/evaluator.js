@@ -2995,7 +2995,7 @@ class PartialEvaluator {
           glyphUnicode,
           textChunk.width - widthBefore,
           textChunk,
-          font,
+          textState,
           glyph
         );
 
